@@ -22,10 +22,10 @@ class Model:
         self.num_filters_parargaph=15
         self.num_filters_allPara=20
         self.maxParagraph = maxParagraphs
-
+        self.poolLength=5
         self.filterShapeOfAllPara =[self.filterSizes_allPara,3,1,self.num_filters_allPara]
-        self.fullyConnectedLayerInput = 2100
-        
+        self.fullyConnectedLayerInput = 42000
+        self.device ='cpu'
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
 
         self.paragraphList = []
@@ -41,7 +41,7 @@ class Model:
         
     
     def graph(self):
-        device_name='gpu'
+        device_name=self.device
         with tf.device(device_name): 
             self.convOutput=self.convLayerCombineParagraph(self.paragraphList,self.filterSizes_paragraph,self.filterShapeOfAllPara,self.num_filters_parargaph,self.num_filters_allPara)
             self.prediction=self.fullyConnectedLayer(self.convOutput,self.labels)
@@ -51,7 +51,7 @@ class Model:
     
     
     def getParagraphEmbedding(self,paragraphWords):
-        device_name='gpu'
+        device_name=self.device
         with tf.device(device_name): 
             paraEmbedding=tf.nn.embedding_lookup(self.wordEmbedding,paragraphWords)
     
@@ -75,7 +75,7 @@ class Model:
                         name="conv")
 
             h = tf.nn.relu(tf.nn.bias_add(conv, bias), name="relu")
-            pool_length=5
+            pool_length=self.poolLength
             pooled = tf.nn.max_pool(
                         h,
                         ksize=[1, pool_length, 1, 1],
@@ -110,7 +110,8 @@ class Model:
                         padding="SAME",
                         name="conv")
         h = tf.nn.relu(tf.nn.bias_add(conv, bias), name="relu")
-        return tf.reshape(allParagraph,[1,-1])
+        #return tf.reshape(allParagraph,[1,-1])
+        return tf.reshape(h,[1,-1])
     
     def fullyConnectedLayer(self,convOutput,labels):
         shape = [self.fullyConnectedLayerInput,labels]
