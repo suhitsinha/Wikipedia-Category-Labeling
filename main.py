@@ -3,7 +3,7 @@
 
 # In[ ]:
 
-from model import Model
+from model2 import Model2
 from DataParser import DataParser
 
 
@@ -12,7 +12,7 @@ from DataParser import DataParser
 maxParagraphLength=100
 maxParagraphs=7
 labels=5000
-model = Model(maxParagraphLength,maxParagraphs,labels)
+model = Model2(maxParagraphLength,maxParagraphs,labels)
 training = DataParser(maxParagraphLength,maxParagraphs,labels)
 training.getDataFromfile("data/trainSmall.txt")
 

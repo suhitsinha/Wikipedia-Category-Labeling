@@ -13,17 +13,14 @@ class Model2:
         '''
         Constructor
         '''
-        self.wordEmbeddingDimension = 70
+        self.wordEmbeddingDimension = 100
         self.vocabularySize=665000
         self.labels=labels
         self.filterSizes_paragraph = [3]
-        self.filterSizes_allPara=3
         self.paragraphLength=maxParagraphLength
-        self.num_filters_paragraph=15
-        self.num_filters_allPara=20
+        self.num_filters_paragraph=50
         self.maxParagraph = maxParagraphs
-	self.poolLength=5
-        self.filterShapeOfAllPara =[self.filterSizes_allPara,3,1,self.num_filters_allPara]
+	self.poolLength=20
         self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
@@ -43,7 +40,7 @@ class Model2:
     def graph(self):
         device_name='gpu'
         with tf.device(device_name): 
-            self.prediction=self.convLayerCombineParagraph(self.paragraphList,self.filterSizes_paragraph,self.filterShapeOfAllPara,self.num_filters_paragraph,self.num_filters_allPara)
+            self.prediction=self.convLayerCombineParagraph(self.paragraphList,self.filterSizes_paragraph,self.num_filters_paragraph)
             self.cross_entropy = -tf.reduce_sum(((self.target*tf.log(self.prediction + 1e-9)) + ((1-self.target) * tf.log(1 - self.prediction + 1e-9)) )  , name='xentropy' ) 
             self.cost = tf.reduce_mean(self.cross_entropy)
             self.optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.cost)
@@ -86,7 +83,7 @@ class Model2:
 
     
     
-    def convLayerCombineParagraph(self,paragraphVectorList,filterSizes_paragraph,filterShapeOfAllPara,num_filters_parargaph,num_filters_allPara):
+    def convLayerCombineParagraph(self,paragraphVectorList,filterSizes_paragraph,num_filters_parargaph):
     
         paragraphLogit=[]
 	shape = [self.fullyConnectedLayerInput,self.labels]
