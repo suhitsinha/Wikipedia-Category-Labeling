@@ -19,20 +19,21 @@ training.getDataFromfile("data/trainSmall.txt")
 testing = DataParser(maxParagraphLength,maxParagraphs,labels)
 testing.getDataFromfile("data/testSmall.txt")
 
-
-# In[ ]:
 epoch=10
 for e in range(epoch):
     print 'Epoch: ' + str(e)
     for itr in range(training.totalPages):
-        model.train(training.nextBatch())
-    model.save("results/model_"+str(e))
+        cost=model.train(training.nextBatch())
+    print str(cost)
+    model.save("results/model2_"+str(e))
 
 '''
-model.load("results/experiment1")
+model.load("results/model2_9")
 
 # In[ ]:
 
 for itr in range(testing.totalPages):
-    print model.predict(testing.nextBatch())
+    bp, pp = model.predict(testing.nextBatch())
+    print str(bp.shape)
+    print str(pp.shape)
 '''

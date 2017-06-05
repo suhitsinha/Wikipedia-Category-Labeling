@@ -40,7 +40,7 @@ class Model2:
     def graph(self):
         device_name='gpu'
         with tf.device(device_name): 
-            self.prediction=self.convLayerCombineParagraph(self.paragraphList,self.filterSizes_paragraph,self.num_filters_paragraph)
+            self.prediction, self.paragraph_prediction = self.convLayerCombineParagraph(self.paragraphList,self.filterSizes_paragraph,self.num_filters_paragraph)
             self.cross_entropy = -tf.reduce_sum(((self.target*tf.log(self.prediction + 1e-9)) + ((1-self.target) * tf.log(1 - self.prediction + 1e-9)) )  , name='xentropy' ) 
             self.cost = tf.reduce_mean(self.cross_entropy)
             self.optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.cost)
@@ -97,11 +97,11 @@ class Model2:
             logit=tf.matmul(expandedCNNEmbedding,weights)+bias
             logit = tf.nn.softmax(logit)
         
-            paragraphLogit.append(logit)
+            paragraphLogit.append(tf.squeeze(logit))
     
-        temp= tf.stack(paragraphLogit)
-        maxLogit = tf.reduce_max(temp,axis=0)  
-	return maxLogit
+        paragraphLogitStacked = tf.stack(paragraphLogit)
+        maxLogit = tf.reduce_max(paragraphLogitStacked,axis=0)  
+	return maxLogit, paragraphLogitStacked
     '''
     def fullyConnectedLayer(self,convOutput,labels):
         shape = [self.fullyConnectedLayerInput,labels]
@@ -115,15 +115,15 @@ class Model2:
         feed_dict_input[self.target]=data[0]
         for p in range(self.maxParagraph):
             feed_dict_input[self.paragraphList[p]]= data[1][p]
-        self.session.run(self.optimizer,feed_dict=feed_dict_input)
-        return self.session.run(self.cost,feed_dict=feed_dict_input)
+        _, cost = self.session.run((self.optimizer,self.cost),feed_dict=feed_dict_input)
+        return cost
 
     def predict(self,data):
         feed_dict_input={}
 #         feed_dict_input[self.target]=data[0]
         for p in range(self.maxParagraph):
             feed_dict_input[self.paragraphList[p]]= data[1][p]
-        pred=self.session.run(self.prediction,feed_dict=feed_dict_input)
+        pred=self.session.run((self.prediction,self.paragraph_prediction) ,feed_dict=feed_dict_input)
         return pred
           
 

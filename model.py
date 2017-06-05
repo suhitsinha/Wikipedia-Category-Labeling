@@ -125,8 +125,8 @@ class Model:
         feed_dict_input[self.target]=data[0]
         for p in range(self.maxParagraph):
             feed_dict_input[self.paragraphList[p]]= data[1][p]
-        self.session.run(self.optimizer,feed_dict=feed_dict_input)
-        return self.session.run(self.cost,feed_dict=feed_dict_input)
+        _, cost = self.session.run((self.optimizer,self.cost),feed_dict=feed_dict_input)
+        return cost
 
     def predict(self,data):
         feed_dict_input={}
