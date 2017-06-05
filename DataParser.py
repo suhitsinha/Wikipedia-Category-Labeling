@@ -40,7 +40,7 @@ class DataParser:
             for i in range(instancesCount):
                 tempInstance=f.readline().split()
                 temp=[int(x) for x in tempInstance]
-                for i in range(len(temp),maxWordsInParagraph):
+                for j in range(len(temp),maxWordsInParagraph):
                     temp.append(0)
                 instancesTemp.append(temp[:maxWordsInParagraph])
 
