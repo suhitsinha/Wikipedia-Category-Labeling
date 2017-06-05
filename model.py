@@ -9,12 +9,12 @@ import tensorflow as tf
 # In[ ]:
 
 class Model:
-    def __init__(self,maxParagraphLength,maxParagraphs,labels):
+    def __init__(self,maxParagraphLength,maxParagraphs,labels,vocabularySize):
         '''
         Constructor
         '''
         self.wordEmbeddingDimension = 70
-        self.vocabularySize=665000
+        self.vocabularySize=vocabularySize
         self.labels=labels
         self.filterSizes_paragraph = [3]
         self.filterSizes_allPara=3

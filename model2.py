@@ -9,18 +9,18 @@ import tensorflow as tf
 # In[ ]:
 
 class Model2:
-    def __init__(self,maxParagraphLength,maxParagraphs,labels):
+    def __init__(self,maxParagraphLength,maxParagraphs,labels,vocabularySize):
         '''
         Constructor
         '''
         self.wordEmbeddingDimension = 100
-        self.vocabularySize=665000
-        self.labels=labels
+        self.vocabularySize = vocabularySize
+        self.labels = labels
         self.filterSizes_paragraph = [3]
-        self.paragraphLength=maxParagraphLength
-        self.num_filters_paragraph=50
+        self.paragraphLength = maxParagraphLength
+        self.num_filters_paragraph = 50
         self.maxParagraph = maxParagraphs
-	self.poolLength=20
+	self.poolLength = 20
         self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")

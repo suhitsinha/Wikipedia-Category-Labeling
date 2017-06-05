@@ -33,8 +33,7 @@ class DataParser:
             labelsTemp=[0]*totalLabels
             for i in range(labelCount):
                 tempLab=int(f.readline())
-                if tempLab<totalLabels:
-                    labelsTemp[tempLab]=1
+                assert tempLab<totalLabels
             instancesCount=int(f.readline())
             instancesTemp=[]
             for i in range(instancesCount):

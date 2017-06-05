@@ -11,13 +11,14 @@ from DataParser import DataParser
 
 maxParagraphLength=100
 maxParagraphs=7
-labels=5000
-model = Model2(maxParagraphLength,maxParagraphs,labels)
+labels=14252
+vocabularySize=70597
+model = Model2(maxParagraphLength,maxParagraphs,labels, vocabularySize)
 training = DataParser(maxParagraphLength,maxParagraphs,labels)
-training.getDataFromfile("data/trainSmall.txt")
+training.getDataFromfile("data/trainSmallRed.txt")
 
 testing = DataParser(maxParagraphLength,maxParagraphs,labels)
-testing.getDataFromfile("data/testSmall.txt")
+testing.getDataFromfile("data/trainSmallRed.txt")
 
 epoch=10
 for e in range(epoch):
