@@ -20,7 +20,7 @@ class Model2:
         self.paragraphLength = maxParagraphLength
         self.num_filters_paragraph = 50
         self.maxParagraph = maxParagraphs
-	self.poolLength = 20
+	self.poolLength = 25
         self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
@@ -95,7 +95,7 @@ class Model2:
 	    expandedCNNEmbedding = tf.reshape(cnnEmbedding,[1,-1])
         
             logit=tf.matmul(expandedCNNEmbedding,weights)+bias
-            logit = tf.nn.softmax(logit)
+            logit = tf.nn.sigmoid(logit)
         
             paragraphLogit.append(tf.squeeze(logit))
     

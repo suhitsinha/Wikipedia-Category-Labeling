@@ -9,24 +9,24 @@ from DataParser import DataParser
 
 # In[ ]:
 
-maxParagraphLength=100
+maxParagraphLength=150
 maxParagraphs=7
-labels=14252
-vocabularySize=70597
+labels=10000
+vocabularySize=99636
 model = Model2(maxParagraphLength,maxParagraphs,labels, vocabularySize)
 training = DataParser(maxParagraphLength,maxParagraphs,labels)
-training.getDataFromfile("data/trainSmallRed.txt")
+training.getDataFromfile("data/vocab_3L_l10000_red_train.txt")
 
 testing = DataParser(maxParagraphLength,maxParagraphs,labels)
-testing.getDataFromfile("data/trainSmallRed.txt")
+testing.getDataFromfile("data/vocab_3L_l10000_red_test.txt")
 
-epoch=10
+epoch=50
 for e in range(epoch):
     print 'Epoch: ' + str(e)
     for itr in range(training.totalPages):
         cost=model.train(training.nextBatch())
     print str(cost)
-    model.save("results/model2_"+str(e))
+    model.save("model2_l10000_"+str(e))
 
 '''
 model.load("results/model2_9")
