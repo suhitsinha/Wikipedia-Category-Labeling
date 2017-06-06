@@ -7,9 +7,9 @@ import numpy as np
 class DataParser:
     def __init__(self,paraLength,maxPara,labels,vocabSize):
         self.data=[]
-    	self.paragraphLength=paraLength
-	self.maxParagraph=maxPara
-	self.labels=labels
+        self.paragraphLength=paraLength
+        self.maxParagraph=maxPara
+        self.labels=labels
         self.vocabSize=vocabSize
 
     def getDataFromfile(self,fname):
@@ -34,6 +34,7 @@ class DataParser:
             labelsTemp=[0]*totalLabels
             for i in range(labelCount):
                 tempLab=int(f.readline())
+                labelsTemp[tempLab]=1
                 assert tempLab<totalLabels
             instancesCount=int(f.readline())
             instancesTemp=[]

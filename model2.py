@@ -20,7 +20,7 @@ class Model2:
         self.paragraphLength = maxParagraphLength
         self.num_filters_paragraph = 50
         self.maxParagraph = maxParagraphs
-	self.poolLength = 50
+        self.poolLength = 50
         self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
@@ -86,13 +86,13 @@ class Model2:
     def convLayerCombineParagraph(self,paragraphVectorList,filterSizes_paragraph,num_filters_parargaph):
     
         paragraphLogit=[]
-	shape = [self.fullyConnectedLayerInput,self.labels]
+        shape = [self.fullyConnectedLayerInput,self.labels]
         weights =tf.Variable(tf.truncated_normal(shape, stddev=0.1),name="FC_W")
         bias = tf.Variable(tf.constant(0.1, shape=[self.labels]),name="FC_Bias")
         for paragraph in paragraphVectorList:
             paragraphVector = self.getParagraphEmbedding(paragraph)
             cnnEmbedding = self.convLayeronParagraph(paragraphVector,filterSizes_paragraph,1,num_filters_parargaph)
-	    expandedCNNEmbedding = tf.reshape(cnnEmbedding,[1,-1])
+            expandedCNNEmbedding = tf.reshape(cnnEmbedding,[1,-1])
         
             logit=tf.matmul(expandedCNNEmbedding,weights)+bias
             logit = tf.nn.sigmoid(logit)
@@ -101,7 +101,7 @@ class Model2:
     
         paragraphLogitStacked = tf.stack(paragraphLogit)
         maxLogit = tf.reduce_max(paragraphLogitStacked,axis=0)  
-	return maxLogit, paragraphLogitStacked
+        return maxLogit, paragraphLogitStacked
     '''
     def fullyConnectedLayer(self,convOutput,labels):
         shape = [self.fullyConnectedLayerInput,labels]
