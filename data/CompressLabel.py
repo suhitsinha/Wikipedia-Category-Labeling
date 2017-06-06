@@ -29,7 +29,7 @@ def CompressData(infile, outfile, no_labels):
 
     sorted_labels = []
     sorted_freq = []
-    for key, value in sorted(label_voc.iteritems(), key=lambda(k,v): (v,k)):
+    for key, value in sorted(label_voc.iteritems(), key=lambda(k,v): (v,k), reverse=True):
         sorted_labels.append(key)
         sorted_freq.append(value)
     selected_labels = set(sorted_labels[:no_labels])

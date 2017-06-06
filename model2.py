@@ -13,14 +13,14 @@ class Model2:
         '''
         Constructor
         '''
-        self.wordEmbeddingDimension = 100
+        self.wordEmbeddingDimension = 50
         self.vocabularySize = vocabularySize
         self.labels = labels
         self.filterSizes_paragraph = [3]
         self.paragraphLength = maxParagraphLength
         self.num_filters_paragraph = 50
         self.maxParagraph = maxParagraphs
-	self.poolLength = 25
+	self.poolLength = 50
         self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")

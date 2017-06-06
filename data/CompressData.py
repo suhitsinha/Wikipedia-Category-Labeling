@@ -4,8 +4,8 @@ import sys
 
 def CompressData(infile, outfile):
     f=open(infile)
-    word_voc = set()
-    label_voc = set()
+    word_voc = {}
+    label_voc = {}
     totalPages = int(f.readline())
     for p in range(totalPages):
         pageId= f.readline()
@@ -14,17 +14,26 @@ def CompressData(infile, outfile):
         labelCount=int(f.readline())
         for i in range(labelCount):
             tempLab=int(f.readline())
-            label_voc.add(tempLab)
+            try:
+                label_voc[tempLab] += 1
+            except:
+                label_voc[tempLab] = 1
         instancesCount=int(f.readline())
         for i in range(instancesCount):
             tempInstance=f.readline().split()
             temp=[int(x) for x in tempInstance]
             for t in temp:
-                word_voc.add(t)
+                try:
+                    word_voc[t] += 1
+                except:
+                    word_voc[t] = 1
     f.close()
-        
-    id_mapping = {old_id: new_id for (new_id, old_id) in enumerate(word_voc)}
-    label_mapping = {old_label: new_label for (new_label, old_label) in enumerate(label_voc)}
+       
+    sorted_labels = [key for key, value in sorted(label_voc.iteritems(), key=lambda(k,v): (v,k), reverse=True)]
+    sorted_ids = [key for key, value in sorted(word_voc.iteritems(), key=lambda(k,v): (v,k), reverse=True)]
+     
+    id_mapping = {old_id: new_id for (new_id, old_id) in enumerate(sorted_ids)}
+    label_mapping = {old_label: new_label for (new_label, old_label) in enumerate(sorted_labels)}
 
     json.dump(id_mapping, open(outfile+'_id_mapping.json', 'w'))
     json.dump(label_mapping, open(outfile+'_label_mapping.json', 'w'))

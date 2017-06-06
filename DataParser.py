@@ -5,11 +5,12 @@
 
 import numpy as np
 class DataParser:
-    def __init__(self,paraLength,maxPara,labels):
+    def __init__(self,paraLength,maxPara,labels,vocabSize):
         self.data=[]
     	self.paragraphLength=paraLength
 	self.maxParagraph=maxPara
 	self.labels=labels
+        self.vocabSize=vocabSize
 
     def getDataFromfile(self,fname):
         self.counter =0
@@ -38,7 +39,7 @@ class DataParser:
             instancesTemp=[]
             for i in range(instancesCount):
                 tempInstance=f.readline().split()
-                temp=[int(x) for x in tempInstance]
+                temp=[int(x) for x in tempInstance if int(x) > 0 and int(x) < self.vocabSize]
                 for j in range(len(temp),maxWordsInParagraph):
                     temp.append(0)
                 instancesTemp.append(temp[:maxWordsInParagraph])
