@@ -21,7 +21,7 @@ class Model2:
         self.num_filters_paragraph = 50
         self.maxParagraph = maxParagraphs
         self.pool_size = 5
-        self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
+        self.fullyConnectedLayerInput = self.pool_size*self.num_filters_paragraph*len(self.filterSizes_paragraph)
         
         self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
 
@@ -72,8 +72,8 @@ class Model2:
 
             h = tf.nn.relu(tf.nn.bias_add(conv, bias), name="relu")
 	    h_trans = tf.transpose(tf.squeeze(h))
-            k_max_pooled = tf.nn.top_k(h_trans, k=self.pool_size)
-            pooled_outputs.append(k_max_pooled)
+            k_max_pooled, _ = tf.nn.top_k(h_trans, k=self.pool_size)
+            pooled_outputs.append(tf.reshape(k_max_pooled, [-1]))
         return tf.reshape(tf.concat(pooled_outputs,axis=0),[1,-1])
 
     
@@ -89,7 +89,7 @@ class Model2:
             cnnEmbedding = self.convLayeronParagraph(paragraphVector,filterSizes_paragraph,1,num_filters_parargaph)
             #expandedCNNEmbedding = tf.reshape(cnnEmbedding,[1,-1])
         
-            logit=tf.matmul(expandedCNNEmbedding,weights)+bias
+            logit=tf.matmul(cnnEmbedding,weights)+bias
             logit = tf.nn.sigmoid(logit)
         
             paragraphLogit.append(tf.squeeze(logit))
