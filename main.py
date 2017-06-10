@@ -23,9 +23,11 @@ testing.getDataFromfile("data/vocab_3L_l1000_red_test.txt")
 epoch=5
 for e in range(epoch):
     print 'Epoch: ' + str(e)
+    cum_cost = 0
     for itr in range(training.totalPages):
         cost=model.train(training.nextBatch())
-    print str(cost)
+        cum_cost += cost
+    print str(cum_cost/training.totalPages)
     model.save("model2_l1000_"+str(e))
 
 '''

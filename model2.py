@@ -18,12 +18,12 @@ class Model2:
         self.labels = labels
         self.filterSizes_paragraph = [3]
         self.paragraphLength = maxParagraphLength
-        self.num_filters_paragraph = 50
+        self.num_filters_paragraph = 1000
         self.maxParagraph = maxParagraphs
-        self.poolLength = 50
-        self.fullyConnectedLayerInput = int(maxParagraphLength*self.num_filters_paragraph/self.poolLength)
+        self.attention_dim = 200
+        self.fullyConnectedLayerInput = len(self.filterSizes_paragraph)*self.num_filters_paragraph
         
-        self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -1.0, 1.0),name="wordEmbedding")
+        self.wordEmbedding = tf.Variable(tf.random_uniform([self.vocabularySize, self.wordEmbeddingDimension], -0.01, 0.01),name="wordEmbedding")
 
         self.paragraphList = []
         for i in range(self.maxParagraph):
@@ -54,6 +54,19 @@ class Model2:
         return tf.expand_dims(tf.expand_dims(paraEmbedding, -1),0)
     
     
+    def attentive_sum(self,inputs,input_dim,attention_dim):
+        input_list = tf.unstack(inputs)
+        seq_length = len(input_list)
+        W =  tf.Variable(tf.random_uniform([input_dim,attention_dim], -0.01, 0.01))
+        U =  tf.Variable(tf.random_uniform([attention_dim,1], -0.01, 0.01))
+        temp1 = [tf.nn.tanh(tf.matmul(tf.expand_dims(input_list[i], 0),W)) for i in range(seq_length)]
+        temp2 = [tf.matmul(temp1[i],U) for i in range(seq_length)]
+        pre_activations = tf.concat(temp2,1)
+        attentions = tf.split(tf.nn.softmax(pre_activations),seq_length,1)
+        weighted_inputs = [tf.multiply(input_list[i],attentions[i]) for i in range(seq_length)]
+        output = tf.add_n(weighted_inputs)
+        return output, attentions
+
     
     def convLayeronParagraph(self,paragraphVector,filterSizes,num_input_channels,num_filters):
     
@@ -70,15 +83,9 @@ class Model2:
                         padding="SAME",
                         name="conv")
 
-            h = tf.nn.relu(tf.nn.bias_add(conv, bias), name="relu")
-            pool_length=self.poolLength
-            pooled = tf.nn.max_pool(
-                        h,
-                        ksize=[1, pool_length, 1, 1],
-                        strides=[1, pool_length, 1, 1],
-                        padding='SAME',
-                        name="pool")
-            pooled_outputs.append(pooled)
+            h = tf.nn.relu(tf.nn.bias_add(tf.squeeze(conv), bias), name="relu")
+            output, _ = self.attentive_sum(h, num_filters, self.attention_dim)
+            pooled_outputs.append(output)
         return tf.reshape(tf.concat(pooled_outputs,axis=0),[1,-1])
 
     
